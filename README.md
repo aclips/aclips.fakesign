@@ -132,43 +132,54 @@ https://sign.bitrix24.ru
 | `public/index.php` | копируется в `/fakesign/index.php` - фронт-контроллер |
 | `templates/signing.php` | страница подписания |
 | `templates/document_placeholder.png` | картинка-заглушка предпросмотра |
-| `tools/register-provider.php` | CLI: `status`, `journal [N]` |
-| `tools/check-isolation.php` | проверка изоляции от облачной службы |
+| `.settings.php` | регистрация консольных команд |
+| `lib/Cli/Command/` | консольные команды: `status`, `journal`, `check-isolation` |
+| `lib/Service/ModuleStatus.php`, `IsolationCheck.php` | данные для консольных команд |
 | `tests/` | собственный раннер `tests/run.php` и кейсы |
 
 ## CLI
 
-Команды выполняются из корневого каталога Bitrix.
+Консольные команды Bitrix Framework. Требуются composer-зависимости проекта
+(`symfony/console`): выполните один раз `composer install` в корне сайта.
+
+Команды выполняются через `bitrix/bitrix.php`:
+
+```bash
+php bitrix/bitrix.php aclips.fakesign:status        # из корня сайта
+cd bitrix && php bitrix.php aclips.fakesign:status  # из каталога bitrix
+```
+
+Полный список доступных команд: `php bitrix/bitrix.php list`.
 
 ### Проверка состояния провайдера
 
 ```bash
-php local/modules/aclips.fakesign/tools/register-provider.php status
+php bitrix/bitrix.php aclips.fakesign:status
 ```
 
-Выводит:
+Выводит JSON:
 
-- адрес тестового сервиса;
+- адрес тестового сервиса (`public_base_url`);
 - endpoint службы;
 - состояние файла подмены адреса.
 
 ### Просмотр журнала обращений
 
 ```bash
-php local/modules/aclips.fakesign/tools/register-provider.php journal [N]
+php bitrix/bitrix.php aclips.fakesign:journal [N]
 ```
 
-Показывает последние `N` записей журнала обращений к API.
-
-Если параметр `N` не указан, используется значение по умолчанию.
+Показывает последние `N` записей журнала обращений к API (по умолчанию 25, максимум 500).
 
 ### Проверка изоляции
 
 ```bash
-php local/modules/aclips.fakesign/tools/check-isolation.php
+php bitrix/bitrix.php aclips.fakesign:check-isolation
 ```
 
-Проверяет изоляцию тестового провайдера от облачной службы.
+Проверяет изоляцию тестового провайдера от облачной службы: адрес подмены
+записан, ни один регион не указывает в облако, фейк-сервис отвечает.
+Код выхода 0 - изоляция цела; 1 - есть обращения или адреса облачной службы.
 
 ## Тесты
 
@@ -179,6 +190,8 @@ php local/modules/aclips.fakesign/tests/run.php
 ```
 
 Тесты не выполняют сетевых запросов и не обращаются к облачной службе.
+Проверка имен консольных команд выполняется при установленных
+composer-зависимостях (`composer install` в корне сайта).
 
 ## Удаление
 

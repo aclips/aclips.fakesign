@@ -118,7 +118,7 @@ class aclips_fakesign extends CModule
 
     /**
      * Best-effort: сбой записи подмены не должен блокировать установку самого модуля
-     * (причины - права/конфиг; проверяется потом tools/check-isolation.php).
+     * (причины - права/конфиг; проверяется потом командой aclips.fakesign:check-isolation).
      */
     private function writeAddressOverrideBestEffort(): void
     {

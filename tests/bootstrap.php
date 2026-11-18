@@ -26,6 +26,13 @@ Loader::registerNamespace(
     $_SERVER['DOCUMENT_ROOT'] . '/local/modules/aclips.fakesign/lib'
 );
 
+// Composer-зависимости (symfony/console) - если установлены (composer install в корне сайта).
+$composerAutoload = $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php';
+if (is_file($composerAutoload))
+{
+    require_once $composerAutoload;
+}
+
 function expect_true(bool $condition, string $message = ''): void
 {
     if (!$condition)
